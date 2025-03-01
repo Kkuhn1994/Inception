@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 
-mysql_install_db
-mysqld
+cat /run/secrets/password
+
+mysqld_safe

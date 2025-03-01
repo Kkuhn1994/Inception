@@ -5,12 +5,11 @@ RUN apt update && apt upgrade -y && apt install -y \
 	php-mysqli \
 	curl
 
-RUN mkdir -p /run/php
-RUN chown -R www-data:www-data /run/php
+
+
+RUN mkdir -p /run/php && chown -R www-data:www-data /run/php && chmod 755 /run/php
+
 
 COPY www.conf /etc/php/7.4/fpm/pool.d/.
-COPY script.sh .
 
-RUN chmod +x script.sh 
-
-CMD ["./script.sh"]
+CMD ["php-fpm7.4", "-F"]
