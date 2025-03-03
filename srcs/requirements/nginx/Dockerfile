@@ -5,5 +5,4 @@ RUN apt update && apt upgrade && apt install -y \
 
 COPY default /etc/nginx/sites-available/.
 
-
 CMD ["nginx", "-g", "daemon off;"]

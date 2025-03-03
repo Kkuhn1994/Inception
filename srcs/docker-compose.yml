@@ -4,29 +4,42 @@ services:
   nginx:
     build: requirements/nginx/.
     container_name: nginx
+    depends_on:
+      - wordpress
+      - mariadb
     ports:
       - "80:80"
     volumes:
       - ./web:/var/www/html
-    secrets:
-      - password
     networks:
-      - inception
-    depends_on:
-      - wordpress
+      inception:
   wordpress:
     build: requirements/wordpress/.
     container_name: wp-php
-    networks:
-      - inception
+    depends_on:
+      - mariadb
     volumes:
       - ./web:/var/www/html
+    networks:
+      inception:
+    secrets:
+      - password
+      - root_password
+      - user
+      - root_user
+      - db_name
   mariadb:
     build: requirements/mariadb/.
     container_name: mariadb
+    networks:
+      inception:
     secrets:
       - password
-    
+      - root_password
+      - user
+      - root_user
+      - db_name
+
 networks:
   inception:
 
