@@ -19,6 +19,11 @@ chmod +x wp-cli.phar
 
 ./wp-cli.phar core download --allow-root
 ./wp-cli.phar config create --dbname=$DB_NAME --dbuser=$ROOT_USER --dbpass=$ROOT_PASSWORD --dbhost=mariadb --allow-root
-./wp-cli.phar core install --url=localhost --title=inception --admin_user=$ROOT_USER --admin_password=$ROOT_PASSWORD --admin_email=admin@admin.com --allow-root
+./wp-cli.phar core install --url=localhost --title=inception --admin_user=$ROOT_USER --admin_password=$ROOT_PASSWORD --admin_email=$ROOT_USER@example.com --allow-root
+./wp-cli.phar user create $USER $USER@example.com --user_pass=$PASSWORD --role=subscriber --allow-root
+
+./wp-cli.phar user list --allow-root
+
+
 
 php-fpm7.4 -F

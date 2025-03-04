@@ -11,4 +11,4 @@ COPY ./script2.sh ./script.sh
 RUN chmod +x script.sh
 COPY www.conf /etc/php/7.4/fpm/pool.d/.
 
-CMD ["./script.sh"]
+ENTRYPOINT ["./script.sh"]
