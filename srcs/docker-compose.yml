@@ -57,6 +57,20 @@ services:
     networks:
       - inception 
 
+  ftp:
+    build: requirements/bonus/ftp/.
+    container_name: ftp
+    # restart: unless-stopped
+    volumes:
+      - ./web:/home/kkuhn/www
+    ports:
+      - "21:21"
+      - "30000-30010:30000-30010"
+    networks:
+      - inception
+    privileged: true
+
+
 networks:
   inception:
     driver : bridge
