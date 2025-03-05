@@ -49,15 +49,15 @@ define( 'DB_COLLATE', '' );
  *
  * @since 2.6.0
  */
-define( 'AUTH_KEY',          'z.O<Xu/.DL0H7h!aS5?AhW6>y~Yh*`v,@,r0StpVXw1:I5#CS9GIol`N$%b}mBW=' );
-define( 'SECURE_AUTH_KEY',   '[`*5TiBNH:K5wW_8s*hVo*i6G PJkLbS(ZqVVxL@IK|}$m4LU.@*@ U<>ERR}LL5' );
-define( 'LOGGED_IN_KEY',     '2SUOoh60W%P}zMy^)lnW0&=sSQlXv!KBL+-z-r]!sam9;yS8$A#6O{4j2yH],?j=' );
-define( 'NONCE_KEY',         '`]2qYN|[o2>y*U5_+}=5vxe|l]8;nVlHvK`wjC<Y{X[4RKWLx4{Xn|P6[OzKA%;O' );
-define( 'AUTH_SALT',         'Gf$1$%muS%<O?)~QH^)df#,Tg~ 3P8u[O#?7EYoC31:(9G5G=.XGui=^=DO<X~SC' );
-define( 'SECURE_AUTH_SALT',  'Pm~s3wbp0.fY+%w@5*w}HJ7uOfQ6Noiur&n[Xz*OD$$Cd$sH*R(ba0YLGfS7co0s' );
-define( 'LOGGED_IN_SALT',    'mnDA?y!(-1cf&`8bv._{6I8)%VY[-yzRopTn+|v)+;>l>|2fH?h2KyGR4:tNSm>t' );
-define( 'NONCE_SALT',        '9Y^d~vqG<[$A<j]<qYme/C3%bYflD]afZwZ_y=h=;~@t8%%cfx*J7$u^x3jM}6ka' );
-define( 'WP_CACHE_KEY_SALT', '8FV.&bGDnM3vPcW=9jscdQ]aq[Z$7f7J6[.GA@cga/}BI#y*uo4hUI D`6A)pU2E' );
+define( 'AUTH_KEY',          'P!R*;*bVj|2QtF3xWgF}7[VRAni0Nt]#$iS~pN:V&twPX@1^MNM(IF9-YM AN{>8' );
+define( 'SECURE_AUTH_KEY',   'uB,&gU!clq4YV)Cx} i64&31sWhlm/#YrsE@hWc&wuQAAt+|Q~0w.M=n%U?%YJ.P' );
+define( 'LOGGED_IN_KEY',     'kiO{yzKkajYROw_du7BPfZ<1B0l;3M2p5ez({HHOAN0.{>=y;h3e?EBFBW8&+5t&' );
+define( 'NONCE_KEY',         'hCFEhRCIo?{ 5C5(|GmH+lj2]rX6aai:N`B[jF*_aNHZUvT.~b7N[qI3[sqye>T,' );
+define( 'AUTH_SALT',         'CM &Pl+$0z.wrVP).:ko$;+Z{1oUA<XXrv|^/.xwb$Os1Q-42(!e_*W*X22+;l9r' );
+define( 'SECURE_AUTH_SALT',  ',P #F>=<bEgQd0My,FS5Xx$tZFgG+,DBS>y_uMEy&[Jc$EE3BUC/DB|,^N@TI[=k' );
+define( 'LOGGED_IN_SALT',    '9l[>hY]kD!s.I`2U2V,h#$1Y,!7yhTw>e[%{Ts HLtX[SH7%yNO]ho]poW]qVj}k' );
+define( 'NONCE_SALT',        '~|V`iK&P-JM`0[6|trxYTXm*W&:M#lu)tY(@H|y#UpQs=jaV!wI<afDN<fuD]GcU' );
+define( 'WP_CACHE_KEY_SALT', '+wNM:2zVDUwdzZjLvL!SelhR_1e5++W>k;4l0zzH?]G#_Q]C9).H^i^rVFVjVQ3v' );
 
 
 /**#@-*/
@@ -91,6 +91,10 @@ if ( ! defined( 'WP_DEBUG' ) ) {
 	define( 'WP_DEBUG', false );
 }
 
+define( 'WP_REDIS_HOST', 'redis' );
+define( 'WP_REDIS_PORT', '6379' );
+define( 'WP_REDIS_CLIENT', 'phpredis' );
+define( 'WP_REDIS_DATABASE', '0' );
 /* That's all, stop editing! Happy publishing. */
 
 /** Absolute path to the WordPress directory. */

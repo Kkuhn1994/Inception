@@ -14,7 +14,8 @@ services:
       - ./web:/var/www/html
       - ./requirements/nginx/ssl:/etc/nginx/ssl:ro
     networks:
-      inception:
+      - inception
+
   wordpress:
     build: requirements/wordpress/.
     container_name: wp-php
@@ -24,19 +25,20 @@ services:
     volumes:
       - ./web:/var/www/html
     networks:
-      inception:
+      - inception
     secrets:
       - password
       - root_password
       - user
       - root_user
       - db_name
+
   mariadb:
     build: requirements/mariadb/.
     container_name: mariadb
     restart: unless-stopped
     networks:
-      inception:
+      - inception
     secrets:
       - password
       - root_password
@@ -44,9 +46,20 @@ services:
       - root_user
       - db_name
       
+  
+  redis:
+    build: requirements/bonus/redis/.
+    container_name: redis
+    restart: unless-stopped
+    command: redis-server --protected-mode no
+    expose:
+      - "6379"
+    networks:
+      - inception 
 
 networks:
   inception:
+    driver : bridge
 
 secrets:
   password:

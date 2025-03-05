@@ -6,12 +6,6 @@ ROOT_PASSWORD=$(cat /run/secrets/root_password)
 USER=$(cat /run/secrets/user)
 PASSWORD=$(cat /run/secrets/password)
 
-
-echo $DB_NAME
-echo $ROOT_USER
-echo $ROOT_PASSWORD
-
-
 cd /var/www/html
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x wp-cli.phar
@@ -24,6 +18,17 @@ chmod +x wp-cli.phar
 
 ./wp-cli.phar user list --allow-root
 
+# Install Redis Object Cache plugin
+./wp-cli.phar plugin install redis-cache --activate --allow-root
 
+# Add Redis configuration to wp-config.php
+./wp-cli.phar config set WP_REDIS_HOST redis --allow-root
+./wp-cli.phar config set WP_REDIS_PORT 6379 --allow-root
+./wp-cli.phar config set WP_REDIS_CLIENT phpredis --allow-root
+./wp-cli.phar config set WP_REDIS_DATABASE 0 --allow-root
+
+
+# Enable Redis Object Cache
+./wp-cli.phar redis enable --allow-root
 
 php-fpm7.4 -F

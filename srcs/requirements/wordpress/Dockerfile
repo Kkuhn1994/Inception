@@ -1,9 +1,12 @@
 FROM debian:bullseye
 
-RUN apt update && apt upgrade && apt install -y \
-	php-fpm \
-	php-mysqli \
-	curl
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+    redis-server \
+    php-redis \
+    php-fpm \
+    php-mysqli \
+    curl \
+    && apt-get clean
 
 RUN mkdir -p /run/php && chown -R www-data:www-data /run/php && chmod 755 /run/php
 
