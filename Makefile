@@ -4,7 +4,7 @@ COMPOSE_FILE = srcs/docker-compose.yml
 
 # Standardbefehl: Container starten
 up:
-	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) up -d --build
+	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) up --build -d
 
 # Container stoppen
 down:
