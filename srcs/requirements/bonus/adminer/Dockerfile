@@ -1,55 +1,33 @@
-# FROM debian:bullseye
-
-# RUN apt-get update && apt-get install -y \
-# 	apache2 \
-# 	php \
-# 	php-mysqli \
-# 	php-pgsql \
-# 	php-sqlite3 \
-# 	curl \
-# 	&& rm -rf /var/lib/apt/lists/*
-
-# # Adminer herunterladen
-# RUN curl -o /var/www/html/adminer.php https://www.adminer.org/latest.php
-# RUN echo "Listen 8080" >> /etc/apache2/ports.conf
-# RUN sed -i 's/<VirtualHost *:80>/<VirtualHost *:8080>/g' /etc/apache2/sites-available/000-default.conf
-# # Konfiguration von Apache
-# RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-# # Apache-Ports freigeben (Standardport 80)
-# RUN echo "<html><body><h1>Apache läuft</h1></body></html>" > /var/www/html/index.html
-# COPY dir.conf /etc/apache2/mods-enabled/dir.conf
-# EXPOSE 8080
-
-# # Starten von Apache im Vordergrund
-# CMD ["apache2ctl", "-D", "FOREGROUND"]
-
-
-
 FROM debian:bullseye
 
+# Installiere benötigte Pakete
 RUN apt-get update && apt-get install -y \
     apache2 \
-    openssl \
     php \
     php-mysqli \
     php-pgsql \
     php-sqlite3 \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean
 
-RUN a2enmod ssl
+# Entferne die Standard-Indexdatei von Apache
+RUN rm -f /var/www/html/index.html
 
-# Lade Adminer und speichere es im richtigen Verzeichnis
-RUN curl -o /var/www/html/adminer.php https://www.adminer.org/latest.php
+# Installiere Adminer
+RUN curl -o /var/www/html/adminer.php https://www.adminer.org/static/download/4.8.1/adminer-4.8.1.php
 
-# Setze den Servername
+# Erstelle eine index.php, die zu adminer.php weiterleitet
+RUN echo '<?php header("Location: /adminer.php"); ?>' > /var/www/html/index.php
+
+# Apache-Konfiguration anpassen
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+RUN echo '<?php phpinfo(); ?>' > /var/www/html/phpinfo.php
+RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
+RUN sed -i 's/*:80/*:8080/g' /etc/apache2/sites-available/000-default.conf
 
-# Apache auf Port 8080 konfigurieren
-RUN echo "Listen 8080" >> /etc/apache2/ports.conf
+# PHP-Modul aktivieren
+RUN a2enmod php7.4
 
-COPY  000-default.conf /etc/apache2/sites-available/.
-COPY dir.conf /etc/apache2/mods-enabled/dir.conf
-# Starte Apache im Vordergrund
+EXPOSE 8080
+
 CMD ["apache2ctl", "-D", "FOREGROUND"]

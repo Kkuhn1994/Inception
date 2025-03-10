@@ -57,15 +57,15 @@ server {
 
 	server_name localhost;
 
-	# location /adminer/ {
-	# 	rewrite ^/adminer/(.*)$ /$1 break;
-    #     proxy_pass http://adminer:8080;
-    #     proxy_set_header Host $host;  # Setze den Host-Header korrekt
-    #     proxy_set_header X-Real-IP $remote_addr;  # Setze die reale IP des Clients
-    #     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;  # Leite die Client-IP weiter
-    #     proxy_set_header X-Forwarded-Proto https;  # Leite das Protokoll weiter (http oder https)
-    #     proxy_redirect off;  # Verhindert, dass die Weiterleitung von URLs verändert wird
-    # }
+	location /adminer/ {
+		rewrite ^/adminer/(.*)$ /$1 break;
+        proxy_pass http://adminer:8080;
+        proxy_set_header Host $host;  # Setze den Host-Header korrekt
+        proxy_set_header X-Real-IP $remote_addr;  # Setze die reale IP des Clients
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;  # Leite die Client-IP weiter
+        proxy_set_header X-Forwarded-Proto https;  # Leite das Protokoll weiter (http oder https)
+        proxy_redirect off;  # Verhindert, dass die Weiterleitung von URLs verändert wird
+    }
 
 	location / {
 		# First attempt to serve request as file, then
