@@ -25,8 +25,12 @@ RUN echo '<?php phpinfo(); ?>' > /var/www/html/phpinfo.php
 RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
 RUN sed -i 's/*:80/*:8080/g' /etc/apache2/sites-available/000-default.conf
 
+# Stelle sicher, dass Apache SSL-bezogene Anfragen korrekt behandelt
+RUN echo 'SetEnvIf X-Forwarded-Proto "https" HTTPS=on' >> /etc/apache2/apache2.conf
+
 # PHP-Modul aktivieren
 RUN a2enmod php7.4
+RUN service apache2 restart
 
 EXPOSE 8080
 

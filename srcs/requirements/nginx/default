@@ -22,14 +22,9 @@ server {
     server_name localhost;
 
     location /adminer/ {
-        proxy_pass http://adminer:8080;  # Der Name des Adminer-Containers und der Port 8080
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_redirect off;
-    }
-}
+        return 301 https://$host$request_uri; 
+	}
+}	
 
 server {
 	listen 443 ssl http2;
@@ -87,15 +82,6 @@ server {
         try_files $uri $uri/ /index.php?$args;  # WordPress-spezifische Weiterleitung
     }
 
-	# pass PHP scripts to FastCGI server
-	#
-    location /adminer {
-        proxy_pass http://adminer:8080;  # Weiterleitung an Adminer-Container
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
 
     # PHP-Dateien verarbeiten
     location ~ \.php$ {
@@ -104,6 +90,38 @@ server {
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         include fastcgi_params;  # Enthält Standard-FastCGI-Parameter
     }
+	# pass PHP scripts to FastCGI server
+	#
+    # location /adminer {
+	# 	rewrite ^/adminer/(.*)$ adminer.php last;
+    #     proxy_pass http://adminer:8080;  # Weiterleitung an Adminer-Container
+    #     proxy_set_header Host $host;
+    #     proxy_set_header X-Real-IP $remote_addr;
+    #     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    #     proxy_set_header X-Forwarded-Proto $scheme;
+    # }
+	location /adminer {
+		proxy_pass http://adminer:8080/adminer.php;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+	}
+
+	# Weiterleitung von statischen Dateien
+	location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2)$ {
+		root /var/www/html;  # Statische Dateien direkt vom Apache-Server
+		try_files $uri $uri/ =404;  # Falls die Datei nicht existiert, gib einen 404-Fehler zurück
+	}
+	# 	location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2)$ {
+	# 	proxy_pass http://adminer:8080;
+	# 	proxy_set_header Host $host;
+	# 	proxy_set_header X-Real-IP $remote_addr;
+	# 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	# 	proxy_set_header X-Forwarded-Proto $scheme;
+	# }
+
+
 	# deny access to .htaccess files, if Apache's document root
 	# concurs with nginx's one
 	#
