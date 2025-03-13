@@ -16,16 +16,20 @@
 # Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
 ##
 
-# Default server configuration
-# server {
-#     listen 80;
-#     listen [::]:80;
+# # Default server configuration
+server {
+    listen 80;
+    server_name localhost;
 
-#  	server_name localhost;
-
-#     # Leite alle Anfragen auf HTTPS weiter
-#     return 301 https://$host$request_uri;
-# }
+    location /adminer/ {
+        proxy_pass http://adminer:8080;  # Der Name des Adminer-Containers und der Port 8080
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_redirect off;
+    }
+}
 
 server {
 	listen 443 ssl http2;
@@ -57,33 +61,49 @@ server {
 
 	server_name localhost;
 
-	location /adminer/ {
-		rewrite ^/adminer/(.*)$ /$1 break;
-        proxy_pass http://adminer:8080;
-        proxy_set_header Host $host;  # Setze den Host-Header korrekt
-        proxy_set_header X-Real-IP $remote_addr;  # Setze die reale IP des Clients
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;  # Leite die Client-IP weiter
-        proxy_set_header X-Forwarded-Proto https;  # Leite das Protokoll weiter (http oder https)
-        proxy_redirect off;  # Verhindert, dass die Weiterleitung von URLs verändert wird
-    }
+	# location /adminer/ {
+	# 	# Forward the request to Adminer running on port 8080
+	# 	proxy_pass http://adminer:8080/;
 
-	location / {
-		# First attempt to serve request as file, then
-		# as directory, then fall back to displaying a 404.
-		try_files $uri $uri/ =404;
-	}
+	# 	# Remove the /adminer prefix before forwarding the request to Adminer
+	# 	rewrite ^/adminer(/.*)$ $1 break;
+
+	# 	# Forward the original headers to Adminer
+	# 	proxy_set_header Host $host;
+	# 	proxy_set_header X-Real-IP $remote_addr;  # Real client IP
+	# 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;  # Forwarded client IPs
+	# 	proxy_set_header X-Forwarded-Proto $scheme;  # Forward the protocol (http or https)
+	# 	proxy_set_header X-Forwarded-Port $server_port;  # Forward the original port
+	# 	proxy_set_header X-Forwarded-Host $host;  # Forward the original host
+
+	# 	# Handle redirects from Adminer and ensure they stay within the /adminer path
+	# 	# Instead of using localhost, use the internal container name (adminer) or the proper container address
+	# 	proxy_redirect http://adminer:8080/ /adminer/;  # Redirects from adminer container to /adminer/
+	# 	proxy_redirect http://adminer/ /adminer/;  # If redirects from localhost are seen
+	# }
+
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;  # WordPress-spezifische Weiterleitung
+    }
 
 	# pass PHP scripts to FastCGI server
 	#
-	location ~ \.php$ {
-		include snippets/fastcgi-php.conf;
-	#
-	#	# With php-fpm (or other unix sockets):
-	#	fastcgi_pass unix:/run/php/php7.4-fpm.sock;
-	#	# With php-cgi (or other tcp sockets):
-		fastcgi_pass wp-php:9000;
-	}
+    location /adminer {
+        proxy_pass http://adminer:8080;  # Weiterleitung an Adminer-Container
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
 
+    # PHP-Dateien verarbeiten
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;  # Enthält wichtige FastCGI-Parameter
+        fastcgi_pass wp-php:9000;  # PHP-FPM-Container
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;  # Enthält Standard-FastCGI-Parameter
+    }
 	# deny access to .htaccess files, if Apache's document root
 	# concurs with nginx's one
 	#

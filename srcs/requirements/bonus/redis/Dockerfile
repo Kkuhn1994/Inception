@@ -6,8 +6,4 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
 	apt-get install iputils-ping
 
-
-
-
-
 CMD ["redis-server"]

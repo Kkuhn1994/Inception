@@ -1,82 +1,91 @@
 version: "3.8"
 
 services:
-  # nginx:
-  #   build: requirements/nginx/.
-  #   container_name: nginx
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - wordpress
-  #     - mariadb
-  #   ports:
-  #     - "443:443"
-  #   volumes:
-  #     - ./web:/var/www/html
-  #     - ./requirements/nginx/ssl:/etc/nginx/ssl:ro
-  #   networks:
-  #     - inception
+  nginx:
+    build: requirements/nginx/.
+    container_name: nginx
+    restart: unless-stopped
+    depends_on:
+      - wordpress
+      - mariadb
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./web:/var/www/html
+      - ./requirements/nginx/ssl:/etc/nginx/ssl:ro
+    networks:
+      - inception
 
-  # wordpress:
-  #   build: requirements/wordpress/.
-  #   container_name: wp-php
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - mariadb
-  #   volumes:
-  #     - ./web:/var/www/html
-  #   networks:
-  #     - inception
-  #   secrets:
-  #     - password
-  #     - root_password
-  #     - user
-  #     - root_user
-  #     - db_name
-  #   expose:
-  #     - "9000"
+  wordpress:
+    build: requirements/wordpress/.
+    container_name: wp-php
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    volumes:
+      - ./web:/var/www/html
+    networks:
+      - inception
+    secrets:
+      - password
+      - root_password
+      - user
+      - root_user
+      - db_name
+    expose:
+      - "9000"
 
-  # mariadb:
-  #   build: requirements/mariadb/.
-  #   container_name: mariadb
-  #   restart: unless-stopped
-  #   networks:
-  #     - inception
-  #   secrets:
-  #     - password
-  #     - root_password
-  #     - user
-  #     - root_user
-  #     - db_name
+  mariadb:
+    build: requirements/mariadb/.
+    container_name: mariadb
+    restart: unless-stopped
+    networks:
+      - inception
+    secrets:
+      - password
+      - root_password
+      - user
+      - root_user
+      - db_name
       
   
-  # redis:
-  #   build: requirements/bonus/redis/.
-  #   container_name: redis
-  #   restart: unless-stopped
-  #   command: redis-server --protected-mode no
-  #   expose:
-  #     - "6379"
-  #   networks:
-  #     - inception 
+  redis:
+    build: requirements/bonus/redis/.
+    container_name: redis
+    restart: unless-stopped
+    command: redis-server --protected-mode no
+    expose:
+      - "6379"
+    networks:
+      - inception 
 
-  # ftp:
-  #   build: requirements/bonus/ftp/.
-  #   container_name: ftp
-  #   # restart: unless-stopped
-  #   volumes:
-  #     - ./web:/home/kkuhn/www
-  #   ports:
-  #     - "21:21"
-  #     - "30000-30010:30000-30010"
-  #   networks:
-  #     - inception
-  #   privileged: true
+  ftp:
+    build: requirements/bonus/ftp/.
+    container_name: ftp
+    restart: unless-stopped
+    volumes:
+      - ./web:/home/kkuhn/www
+    ports:
+      - "21:21"
+      - "30000-30010:30000-30010"
+    networks:
+      - inception
+    privileged: true
 
   adminer:
     build: requirements/bonus/adminer/.
     container_name: adminer
     ports:
       - "8080:8080"
+    networks:
+      - inception
+
+  static_site:
+    build: requirements/bonus/static_website/.
+    container_name: website
+    ports:
+      - "81:81"
     networks:
       - inception
 
