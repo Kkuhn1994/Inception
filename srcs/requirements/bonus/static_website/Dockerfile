@@ -1,6 +1,14 @@
+# Verwende das offizielle Debian Bullseye Image als Basis
 FROM debian:bullseye
 
-RUN apt update && apt upgrade && apt install -y \
-	nginx
+# Aktualisiere die Paketlisten und installiere Apache
+RUN apt-get update && \
+    apt-get install -y apache2 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-CMD ["nginx", "-g", "daemon off;"]
+# Expose den Port 80 für den Apache-Webserver
+EXPOSE 80
+
+# Starte Apache im Vordergrund
+CMD ["apachectl", "-D", "FOREGROUND"]
