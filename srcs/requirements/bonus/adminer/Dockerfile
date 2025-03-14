@@ -21,7 +21,6 @@ RUN echo '<?php header("Location: /adminer.php"); ?>' > /var/www/html/index.php
 
 # Apache-Konfiguration anpassen
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-RUN echo '<?php phpinfo(); ?>' > /var/www/html/phpinfo.php
 RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
 RUN sed -i 's/*:80/*:8080/g' /etc/apache2/sites-available/000-default.conf
 
