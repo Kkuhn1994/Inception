@@ -6,6 +6,8 @@ COMPOSE_FILE = srcs/docker-compose.yml
 up:
 	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) up --build -d
 
+
+
 # Container stoppen
 down:
 	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) down

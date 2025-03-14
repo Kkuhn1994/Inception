@@ -11,13 +11,12 @@ RUN rm -f /var/www/html/index.html
 
 # Kopiere die statische Seite ins Webverzeichnis
 
-# RUN mkdir -p /usr/local/apache2/htdocs/static_site
 COPY index.html /var/www/html/.
 
-# RUN echo '<?php header("Location: /adminer.php"); ?>' > /var/www/html/index.php
 
-# Expose den Port 80 für den Apache-Webserver
-EXPOSE 80
+# Konfiguriere Apache, um auf Port 81 zu lauschen
+RUN sed -i 's/Listen 80/Listen 81/g' /etc/apache2/ports.conf && \
+    sed -i 's/<VirtualHost \*:80>/<VirtualHost *:81>/g' /etc/apache2/sites-available/000-default.conf
 
 # Starte Apache im Vordergrund
 CMD ["apachectl", "-D", "FOREGROUND"]

@@ -83,7 +83,7 @@ services:
 
   static_site:
     build: requirements/bonus/static_website/.
-    container_name: website
+    container_name: static_site
     ports:
       - "81:81"
     networks:
