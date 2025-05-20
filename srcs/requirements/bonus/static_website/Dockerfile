@@ -3,6 +3,7 @@ FROM debian:bullseye
 
 # Aktualisiere die Paketlisten und installiere Apache
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y apache2 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
