@@ -112,6 +112,31 @@ server {
 		proxy_set_header X-Forwarded-Proto $scheme;
 	}
 
+	location /cadvisor/ {
+		proxy_pass http://cadvisor:8080/;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+
+		# Redirects vom Backend anpassen, damit sie auch /cadvisor voranstellen
+		proxy_redirect / /cadvisor/;
+
+		# HTML-Inhalte anpassen: Pfade mit / ersetzen durch /cadvisor/
+		sub_filter_types text/html application/javascript;
+		sub_filter 'href="/' 'href="/cadvisor/';
+		sub_filter 'src="/' 'src="/cadvisor/';
+		sub_filter 'action="/' 'action="/cadvisor/';
+		sub_filter_once off;
+
+		# Aktiviert sub_filter, damit ersetzt wird
+		proxy_set_header Accept-Encoding "";
+
+		# optional: Timeout erhöhen
+		proxy_read_timeout 300;
+	}
+
+
 	location /website {
 		proxy_pass http://static_site:81/;
 		proxy_set_header Host $host;

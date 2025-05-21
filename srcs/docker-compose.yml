@@ -9,7 +9,6 @@ services:
       - wordpress
       - mariadb
     ports:
-      - "80:80"
       - "443:443"
     volumes:
       - ./web:/var/www/html
@@ -75,17 +74,36 @@ services:
 
   adminer:
     build: requirements/bonus/adminer/.
+    restart: unless-stopped
     container_name: adminer
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     networks:
       - inception
 
   static_site:
     build: requirements/bonus/static_website/.
+    restart: unless-stopped
     container_name: static_site
-    ports:
-      - "81:81"
+    expose:
+      - "81"
+    networks:
+      - inception
+      
+  cadvisor:
+    build: 
+      context: requirements/bonus/cadvisor/.
+      args:
+        - CADVISOR_VERSION=v0.52.1
+    container_name: cadvisor
+    expose:
+        - "8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: unless-stopped
     networks:
       - inception
 

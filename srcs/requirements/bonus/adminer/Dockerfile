@@ -32,6 +32,4 @@ RUN echo 'SetEnvIf X-Forwarded-Proto "https" HTTPS=on' >> /etc/apache2/apache2.c
 RUN a2enmod php7.4
 RUN service apache2 restart
 
-EXPOSE 8080
-
-CMD ["apache2ctl", "-D", "FOREGROUND"]
+ENTRYPOINT  ["apache2ctl", "-D", "FOREGROUND"]
