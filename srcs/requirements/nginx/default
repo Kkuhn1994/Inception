@@ -86,6 +86,23 @@ server {
         try_files $uri $uri/ /index.php?$args;  # WordPress-spezifische Weiterleitung
     }
 
+    location ^~ /cadvisor/containers/ {
+        proxy_pass       http://cadvisor:8080/containers/;
+        proxy_set_header Host               $host;
+        proxy_set_header X-Real-IP          $remote_addr;
+        proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto  https;
+        proxy_read_timeout                   300;
+    }
+	
+    location ^~ /cadvisor/static/ {
+        proxy_pass       http://cadvisor:8080/static/;
+        proxy_set_header Host             $host;
+        proxy_set_header X-Real-IP        $remote_addr;
+        proxy_set_header X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_read_timeout 300;
+    }
 
     # PHP-Dateien verarbeiten
     location ~ \.php$ {
@@ -112,30 +129,25 @@ server {
 		proxy_set_header X-Forwarded-Proto $scheme;
 	}
 
-	location /cadvisor/ {
-		proxy_pass http://cadvisor:8080/;
-		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_set_header X-Forwarded-Proto $scheme;
+    location ^~ /cadvisor/ {
+        proxy_pass       http://cadvisor:8080/;
+        proxy_set_header Host               $host;
+        proxy_set_header X-Real-IP          $remote_addr;
+        proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto  https;
+        proxy_set_header Accept-Encoding    "";
+        
+        proxy_redirect   http://cadvisor:8080/   /cadvisor/;
+        proxy_redirect   /                      /cadvisor/;
 
-		# Redirects vom Backend anpassen, damit sie auch /cadvisor voranstellen
-		proxy_redirect / /cadvisor/;
+        # <base> im <head> – nur wenn noch nötig
+        sub_filter_types text/html;
+        sub_filter '<head>' '<head><base href="/cadvisor/">';
+        sub_filter_once on;
 
-		# HTML-Inhalte anpassen: Pfade mit / ersetzen durch /cadvisor/
-		sub_filter_types text/html application/javascript;
-		sub_filter 'href="/' 'href="/cadvisor/';
-		sub_filter 'src="/' 'src="/cadvisor/';
-		sub_filter 'action="/' 'action="/cadvisor/';
-		sub_filter_once off;
-
-		# Aktiviert sub_filter, damit ersetzt wird
-		proxy_set_header Accept-Encoding "";
-
-		# optional: Timeout erhöhen
-		proxy_read_timeout 300;
-	}
-
+        proxy_cookie_path /   /cadvisor/;
+        proxy_read_timeout 300;
+    }
 
 	location /website {
 		proxy_pass http://static_site:81/;
